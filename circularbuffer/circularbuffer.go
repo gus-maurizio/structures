@@ -34,8 +34,6 @@ type circularbuffer struct {
 func New(size int) *circularbuffer {
 	c := &circularbuffer{head: 0, 
 		curr: 0, 
-		win1: 0,
-		win2: 0,
 		Len: size,
 	}
 	c.buffer = make([]interface{},size,size)
