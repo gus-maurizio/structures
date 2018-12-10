@@ -68,7 +68,7 @@ func (c *circularbuffer) Get(idx int) interface{} {
         where := (c.head + idx + c.Len) % c.Len
         return c.buffer[where]
 }
-i
+
 // We use Push to add elements to the circular buffer.
 // Upon creation the buffer is empty. Once the whole 
 // capacity of the buffer (defined by Len elements) is
