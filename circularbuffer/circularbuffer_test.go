@@ -58,8 +58,10 @@ func TestInit(t * testing.T) {
 
 func TestMain(t * testing.T) {
         cbuf := New(5)
+	cbuf.Init(9)
         for i := 1; i <= 8 ; i++ {
                 old := cbuf.Push(i)
+		dump(cbuf)
                 fmt.Printf("iter %d last value: %d (old value: %v)  %+v \n", i, cbuf.Get(-1).(int), old, cbuf.GetValues())
         }
         fmt.Printf("%#v \n", cbuf.GetValues())
