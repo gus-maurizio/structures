@@ -34,14 +34,14 @@ func dump(c *circularbuffer) {
 	fmt.Printf("%#v\n",*c)
 }
 
-func TestNew(t * testing.T) {
+func TestNew(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		cbuf := New(i,0)
 		if cbuf.Len == i {fmt.Printf("iteration %d ok\n", i)}
 	}
 }
 
-func TestInit(t * testing.T) {
+func TestInit(t *testing.T) {
 	cbuf := New(30,5)
 	cbuf.Init(6)
 	total := 0
@@ -56,7 +56,7 @@ func TestInit(t * testing.T) {
 	}
 }
 
-func TestMain(t * testing.T) {
+func TestMain(t *testing.T) {
         cbuf := New(5,9)
         for i := 1; i <= 8 ; i++ {
                 old := cbuf.Push(i)
@@ -65,3 +65,34 @@ func TestMain(t * testing.T) {
         }
         fmt.Printf("%#v \n", cbuf.GetValues())
 }
+
+func TestGetSet(t *testing.T) {
+	cbuf := New(10,0)
+	for i := -10; i < 10; i++ {
+		old := cbuf.Set(i, i*i)
+		fmt.Printf("Setting %d with %d (old %d) for %v\n",i,i*i, old.(int), cbuf.GetValues())
+	}
+}
+
+
+func TestRollingWindow(t *testing.T) {
+	cbuf := New(20,0)
+	for i := 1; i < 20; i++ { cbuf.Set(i, i*i)}
+	fmt.Printf("Init values: %v\n",cbuf.GetValues())
+	
+	fmt.Printf("Roll Window 05 : %v\n",cbuf.GetValues()[cbuf.Len-5:cbuf.Len])
+}
+
+
+func TestDoFunction(t *testing.T) {
+	cbuf := New(20,0)
+	for i := 1; i < 20; i++ { cbuf.Set(i, i*i)}
+	n := 0
+	s := 0
+	cbuf.Do( func(p interface{}) {
+		n++
+		if p != nil { s += p.(int) }
+		})
+	fmt.Printf("N and S: %d %d %v\n",n,s,cbuf.GetValues())
+}
+

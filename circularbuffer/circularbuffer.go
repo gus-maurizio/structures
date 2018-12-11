@@ -87,3 +87,9 @@ func (c *circularbuffer) GetValues() []interface{} {
 	return append(c.buffer[c.head:c.Len], c.buffer[0:c.head]...)
 }
 
+// Execute a functions for each element
+func (c *circularbuffer) Do(f func(interface{})) {
+	for _, value := range c.buffer { f(value) }
+}
+
+// end
