@@ -22,7 +22,7 @@ package circularbuffer
  
 
 type circularbuffer struct {
-	head, curr	int
+	head, full	int
 	Len		int
 	buffer		[]interface{}
 }
@@ -30,10 +30,10 @@ type circularbuffer struct {
 // We allocate a circularbuffer structure that basically is a fixed size
 // array of pointers (interface{}). We give the option of specifying the
 // initial size of the array and using make with cap.
-// The non-exposed head and curr are actually pointers as indexes.
+// The non-exposed head and full are actually pointers as indexes.
 func New(size int) *circularbuffer {
 	c := &circularbuffer{head: 0, 
-		curr: 0, 
+		full: 0, 
 		Len: size,
 	}
 	c.buffer = make([]interface{},size,size)
@@ -67,6 +67,15 @@ func (c *circularbuffer) Get(idx int) interface{} {
         return c.buffer[where]
 }
 
+// This function initializes the whole buffer to a set value
+func (c *circularbuffer) Init(initval interface{}) {
+	for i:= range c.buffer {
+		c.buffer[i] = initval
+	}
+	c.full = c.Len
+        return 
+}
+
 // We use Push to add elements to the circular buffer.
 // Upon creation the buffer is empty. Once the whole 
 // capacity of the buffer (defined by Len elements) is
@@ -75,11 +84,11 @@ func (c *circularbuffer) Get(idx int) interface{} {
 // incremented and wrapped around if necessary.
 func (c *circularbuffer) Push(value interface{}) interface{} {
 	var oldvalue interface{}
-	if c.curr < c.Len {
+	if c.full < c.Len {
 		// buffer is still filling up
-		oldvalue = c.buffer[c.curr]
-		c.buffer[c.curr] = value
-		c.curr = c.curr + 1
+		oldvalue = c.buffer[c.full]
+		c.buffer[c.full] = value
+		c.full = c.full + 1
 	} else {
 		// buffer is full, so head should take the new value
 		oldvalue = c.buffer[c.head]
@@ -89,8 +98,8 @@ func (c *circularbuffer) Push(value interface{}) interface{} {
         return oldvalue
 }
 
-// Get the ordered list of values based on the current state.
+// Get the ordered list of values based on the fullent state.
 func (c *circularbuffer) GetValues() []interface{} {
-	return append(c.buffer[c.head:c.curr], c.buffer[0:c.head]...)
+	return append(c.buffer[c.head:c.full], c.buffer[0:c.head]...)
 }
 
