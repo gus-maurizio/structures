@@ -20,6 +20,10 @@
 
 package circularbuffer
  
+import 	(
+	"fmt"
+	)
+
 
 type circularbuffer struct {
 	head, full	int
@@ -84,6 +88,7 @@ func (c *circularbuffer) Init(initval interface{}) {
 // incremented and wrapped around if necessary.
 func (c *circularbuffer) Push(value interface{}) interface{} {
 	var oldvalue interface{}
+	fmt.Printf("-----> head %d full %d len %d\n",c.head, c.full, c.len)
 	if c.full < c.Len {
 		// buffer is still filling up
 		oldvalue = c.buffer[c.full]
