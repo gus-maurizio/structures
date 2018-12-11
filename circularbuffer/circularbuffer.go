@@ -20,10 +20,6 @@
 
 package circularbuffer
  
-import 	(
-	"fmt"
-	)
-
 
 type circularbuffer struct {
 	head, full	int
@@ -89,18 +85,15 @@ func (c *circularbuffer) Init(initval interface{}) {
 func (c *circularbuffer) Push(value interface{}) interface{} {
 	var oldvalue interface{}
 	if c.full < c.Len {
-		fmt.Printf("--NOT FULL---> head %d full %d len %d\n",c.head, c.full, c.Len)
 		// buffer is still filling up
 		oldvalue = c.buffer[c.full]
 		c.buffer[c.full] = value
 		c.full = c.full + 1
 	} else {
-		fmt.Printf("--YES FULL---> head %d full %d len %d\n",c.head, c.full, c.Len)
 		// buffer is full, so head should take the new value
 		oldvalue = c.buffer[c.head]
 		c.buffer[c.head] = value
 		c.head = (c.head + 1) % c.Len
-		for i := 0; i < c.Len; i++ { fmt.Printf("+++ head %d i %d val %v\n",c.head,i,c.buffer[i]) }
 	}
         return oldvalue
 }
