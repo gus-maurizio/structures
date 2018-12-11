@@ -100,6 +100,7 @@ func (c *circularbuffer) Push(value interface{}) interface{} {
 		oldvalue = c.buffer[c.head]
 		c.buffer[c.head] = value
 		c.head = (c.head + 1) % c.Len
+		for i := 0; i < c.Len; i++ { fmt.Printf("+++ head %d i %d val %v\n",c.head,i,c.buffer[i]) }
 	}
         return oldvalue
 }
