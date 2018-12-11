@@ -12,7 +12,7 @@ type measure struct {
 }
 	
 func main() {  
-	c := circularbuffer.New(5)
+	c := circularbuffer.New(5,measure{})
 	c.Init(measure{})
 	for i := 1; i <= 8 ; i++ {
 		msr := measure{ msgNum:	   i,

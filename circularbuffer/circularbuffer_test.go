@@ -36,13 +36,13 @@ func dump(c *circularbuffer) {
 
 func TestNew(t * testing.T) {
 	for i := 0; i < 10; i++ {
-		cbuf := New(i)
+		cbuf := New(i,0)
 		if cbuf.Len == i {fmt.Printf("iteration %d ok\n", i)}
 	}
 }
 
 func TestInit(t * testing.T) {
-	cbuf := New(30)
+	cbuf := New(30,5)
 	cbuf.Init(6)
 	total := 0
 	for _, value := range cbuf.GetValues() {
@@ -57,8 +57,7 @@ func TestInit(t * testing.T) {
 }
 
 func TestMain(t * testing.T) {
-        cbuf := New(5)
-	cbuf.Init(9)
+        cbuf := New(5,9)
         for i := 1; i <= 8 ; i++ {
                 old := cbuf.Push(i)
 		dump(cbuf)

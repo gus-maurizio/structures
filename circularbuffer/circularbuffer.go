@@ -22,28 +22,24 @@ package circularbuffer
  
 
 type circularbuffer struct {
-	head, full	int
-	Len		int
-	buffer		[]interface{}
+	Len	int
+	head	int
+	buffer	[]interface{}
 }
 
 // We allocate a circularbuffer structure that basically is a fixed size
 // array of pointers (interface{}). We give the option of specifying the
 // initial size of the array and using make with cap.
 // The non-exposed head and full are actually pointers as indexes.
-func New(size int) *circularbuffer {
-	c := &circularbuffer{head: 0, 
-		full: 0, 
-		Len: size,
-	}
-	c.buffer = make([]interface{},size,size)
+func New(size int, initval interface{}) *circularbuffer {
+	c 	 := &circularbuffer{head: 0, Len: size }
+	c.buffer =  make([]interface{},size,size)
+        for i:= range c.buffer { c.buffer[i] = initval }
 	return c
 }
 
 // Length of buffer. Not really needed since we export Len.
-func (c *circularbuffer) Length() int {
-	return c.Len
-}
+func (c *circularbuffer) Length() int { return c.Len }
 
 // This sets a particular value of the buffer array. The function 
 // returns the previous value stored in the idx position.
@@ -69,11 +65,7 @@ func (c *circularbuffer) Get(idx int) interface{} {
 
 // This function initializes the whole buffer to a set value
 func (c *circularbuffer) Init(initval interface{}) {
-	for i:= range c.buffer {
-		c.buffer[i] = initval
-	}
-	c.full = c.Len
-        return 
+	for i:= range c.buffer { c.buffer[i] = initval }
 }
 
 // We use Push to add elements to the circular buffer.
@@ -83,23 +75,15 @@ func (c *circularbuffer) Init(initval interface{}) {
 // with the pushed new value. The head of buffer is 
 // incremented and wrapped around if necessary.
 func (c *circularbuffer) Push(value interface{}) interface{} {
-	var oldvalue interface{}
-	if c.full < c.Len {
-		// buffer is still filling up
-		oldvalue = c.buffer[c.full]
-		c.buffer[c.full] = value
-		c.full = c.full + 1
-	} else {
-		// buffer is full, so head should take the new value
-		oldvalue = c.buffer[c.head]
-		c.buffer[c.head] = value
-		c.head = (c.head + 1) % c.Len
-	}
+	// buffer is full, so head should take the new value
+	oldvalue := c.buffer[c.head]
+	c.buffer[c.head] = value
+	c.head = (c.head + 1) % c.Len
         return oldvalue
 }
 
 // Get the ordered list of values based on the fullent state.
 func (c *circularbuffer) GetValues() []interface{} {
-	return append(c.buffer[c.head:c.full], c.buffer[0:c.head]...)
+	return append(c.buffer[c.head:c.Len], c.buffer[0:c.head]...)
 }
 
