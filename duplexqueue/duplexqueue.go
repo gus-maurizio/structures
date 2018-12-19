@@ -222,4 +222,3 @@ func (q *Duplexqueue) resize() {
 	q.tail = q.count
 	q.buf = newBuf
 }
-

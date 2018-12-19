@@ -615,4 +615,3 @@ func remove(q *Duplexqueue, i int) interface{} {
 	q.Rotate(rots)
 	return elem
 }
-
