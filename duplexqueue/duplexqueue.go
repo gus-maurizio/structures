@@ -26,7 +26,7 @@ func (q *Duplexqueue) Init(qty int, elem interface{}) {
 	if minCapacity > qty {
 		qsz = minCapacity
 	} else {
-		qsz = qty * 2
+		qsz = (qty / 2) * 2
 	}
 	q.buf = make([]interface{}, qsz)
 	q.head  = 0
