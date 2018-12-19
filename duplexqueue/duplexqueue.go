@@ -2,7 +2,7 @@ package duplexqueue
 
 // minCapacity is the smallest capacity that duplexqueue may have.
 // Must be power of 2 for bitwise modulus: x % n == x & (n - 1).
-const minCapacity = 64
+const minCapacity = 8
 
 // Duplexqueue represents a single instance of the duplexqueue data structure.
 type Duplexqueue struct {
