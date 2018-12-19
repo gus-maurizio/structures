@@ -20,6 +20,28 @@ func (q *Duplexqueue) Len() int {
 // PushBack appends an element to the back of the queue.  Implements FIFO when
 // elements are removed with PopFront(), and LIFO when elements are removed
 // with PopBack().
+func (q *Duplexqueue) Init(qty int, elem interface{}) {
+	q.buf   = nil
+	var qsz int
+	if minCapacity > qty {
+		qsz = minCapacity
+	} else {
+		qsz = qty * 2
+	}
+	q.buf = make([]interface{}, qsz)
+	q.head  = 0
+	q.tail  = 0
+	q.count = 0
+	for i := 0; i < qty; i++ {
+		q.buf[i] = elem
+	}
+	q.tail  += qty 
+	q.count  = qty
+}
+
+// PushBack appends an element to the back of the queue.  Implements FIFO when
+// elements are removed with PopFront(), and LIFO when elements are removed
+// with PopBack().
 func (q *Duplexqueue) PushBack(elem interface{}) {
 	q.growIfFull()
 
@@ -38,6 +60,26 @@ func (q *Duplexqueue) PushFront(elem interface{}) {
 	q.buf[q.head] = elem
 	q.count++
 }
+
+
+// PushPop pops back (returns that value) and pushes at front
+func (q *Duplexqueue) PushPop(elem interface{}) interface{} {
+	if q.count <= 0 {
+		panic("duplexqueue: PopBack() called on empty queue")
+	}
+
+	// Calculate new tail position
+	q.tail = q.prev(q.tail)
+	// Remove value at tail.
+	ret := q.buf[q.tail]
+	q.buf[q.tail] = nil
+	// Calculate new head position.
+	q.head = q.prev(q.head)
+	q.buf[q.head] = elem
+	return ret
+}
+
+
 
 // PopFront removes and returns the element from the front of the queue.
 // Implements FIFO when used with PushBack().  If the queue is empty, the call
