@@ -280,10 +280,15 @@ func (q *Duplexqueue) Do(f func(interface{})) {
 	}
 }
 
-
 func (q *Duplexqueue) DoIndex(idx int, f func(interface{})) {
 	for i := 0; i < q.count; i++ {
 		f(q.Index(idx + i))
 	}
 }
 
+func (q *Duplexqueue) DoFor(idx int, cnt int, f func(interface{})) {
+	if cnt > q.count { cnt %= q.count }
+	for i := 0; i < cnt; i++ {
+		f(q.Index(idx + i))
+	}
+}
