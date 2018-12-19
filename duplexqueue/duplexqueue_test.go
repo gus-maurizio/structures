@@ -52,7 +52,7 @@ func TestGrowShrinkBack(t *testing.T) {
 		}
 		q.PushBack(i)
 	}
-	bufLen := len(q.buf)
+	bufLen := len(q.Buf)
 
 	// Remove from back.
 	for i := size; i > 0; i-- {
@@ -67,7 +67,7 @@ func TestGrowShrinkBack(t *testing.T) {
 	if q.Len() != 0 {
 		t.Error("q.Len() =", q.Len(), "expected 0")
 	}
-	if len(q.buf) == bufLen {
+	if len(q.Buf) == bufLen {
 		t.Error("queue buffer did not shrink")
 	}
 }
@@ -82,7 +82,7 @@ func TestGrowShrinkFront(t *testing.T) {
 		}
 		q.PushBack(i)
 	}
-	bufLen := len(q.buf)
+	bufLen := len(q.Buf)
 
 	// Remove from Front
 	for i := 0; i < size; i++ {
@@ -97,7 +97,7 @@ func TestGrowShrinkFront(t *testing.T) {
 	if q.Len() != 0 {
 		t.Error("q.Len() =", q.Len(), "expected 0")
 	}
-	if len(q.buf) == bufLen {
+	if len(q.Buf) == bufLen {
 		t.Error("queue buffer did not shrink")
 	}
 }
@@ -291,18 +291,18 @@ func TestClear(t *testing.T) {
 	if q.Len() != 100 {
 		t.Error("push: queue with 100 elements has length", q.Len())
 	}
-	cap := len(q.buf)
+	cap := len(q.Buf)
 	q.Clear()
 	if q.Len() != 0 {
 		t.Error("empty queue length not 0 after clear")
 	}
-	if len(q.buf) != cap {
+	if len(q.Buf) != cap {
 		t.Error("queue capacity changed after clear")
 	}
 
 	// Check that there are no remaining references after Clear()
-	for i := 0; i < len(q.buf); i++ {
-		if q.buf[i] != nil {
+	for i := 0; i < len(q.Buf); i++ {
+		if q.Buf[i] != nil {
 			t.Error("queue has non-nil deleted elements after Clear()")
 			break
 		}

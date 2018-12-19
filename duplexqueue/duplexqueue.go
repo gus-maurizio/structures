@@ -6,37 +6,37 @@ const minCapacity = 8
 
 // Duplexqueue represents a single instance of the duplexqueue data structure.
 type Duplexqueue struct {
-	buf   []interface{}		`json:"buffer"`
-	head  int 				`json:"head"`
-	tail  int 				`json:"tail"`
-	count int 				`json:"count"`
+	Buf   []interface{}		`json:"buffer"`
+	Head  int 				`json:"qhead"`
+	Tail  int 				`json:"qtail"`
+	Count int 				`json:"qcount"`
 }
 
 // Len returns the number of elements currently stored in the queue.
 func (q *Duplexqueue) Len() int {
-	return q.count
+	return q.Count
 }
 
 // PushBack appends an element to the back of the queue.  Implements FIFO when
 // elements are removed with PopFront(), and LIFO when elements are removed
 // with PopBack().
 func (q *Duplexqueue) Init(qty int, elem interface{}) {
-	q.buf   = nil
+	q.Buf   = nil
 	var qsz int
 	if minCapacity > qty {
 		qsz = minCapacity
 	} else {
 		qsz = (qty / 2) * 2
 	}
-	q.buf = make([]interface{}, qsz)
-	q.head  = 0
-	q.tail  = 0
-	q.count = 0
+	q.Buf = make([]interface{}, qsz)
+	q.Head  = 0
+	q.Tail  = 0
+	q.Count = 0
 	for i := 0; i < qty; i++ {
-		q.buf[i] = elem
+		q.Buf[i] = elem
 	}
-	q.tail  += qty 
-	q.count  = qty
+	q.Tail  += qty 
+	q.Count  = qty
 }
 
 // PushBack appends an element to the back of the queue.  Implements FIFO when
@@ -45,37 +45,37 @@ func (q *Duplexqueue) Init(qty int, elem interface{}) {
 func (q *Duplexqueue) PushBack(elem interface{}) {
 	q.growIfFull()
 
-	q.buf[q.tail] = elem
-	// Calculate new tail position.
-	q.tail = q.next(q.tail)
-	q.count++
+	q.Buf[q.Tail] = elem
+	// Calculate new Tail position.
+	q.Tail = q.next(q.Tail)
+	q.Count++
 }
 
 // PushFront prepends an element to the front of the queue.
 func (q *Duplexqueue) PushFront(elem interface{}) {
 	q.growIfFull()
 
-	// Calculate new head position.
-	q.head = q.prev(q.head)
-	q.buf[q.head] = elem
-	q.count++
+	// Calculate new Head position.
+	q.Head = q.prev(q.Head)
+	q.Buf[q.Head] = elem
+	q.Count++
 }
 
 
 // PushPop pops back (returns that value) and pushes at front
 func (q *Duplexqueue) PushPop(elem interface{}) interface{} {
-	if q.count <= 0 {
+	if q.Count <= 0 {
 		panic("duplexqueue: PopBack() called on empty queue")
 	}
 
-	// Calculate new tail position
-	q.tail = q.prev(q.tail)
-	// Remove value at tail.
-	ret := q.buf[q.tail]
-	q.buf[q.tail] = nil
-	// Calculate new head position.
-	q.head = q.prev(q.head)
-	q.buf[q.head] = elem
+	// Calculate new Tail position
+	q.Tail = q.prev(q.Tail)
+	// Remove value at Tail.
+	ret := q.Buf[q.Tail]
+	q.Buf[q.Tail] = nil
+	// Calculate new Head position.
+	q.Head = q.prev(q.Head)
+	q.Buf[q.Head] = elem
 	return ret
 }
 
@@ -85,14 +85,14 @@ func (q *Duplexqueue) PushPop(elem interface{}) interface{} {
 // Implements FIFO when used with PushBack().  If the queue is empty, the call
 // panics.
 func (q *Duplexqueue) PopFront() interface{} {
-	if q.count <= 0 {
+	if q.Count <= 0 {
 		panic("duplexqueue: PopFront() called on empty queue")
 	}
-	ret := q.buf[q.head]
-	q.buf[q.head] = nil
-	// Calculate new head position.
-	q.head = q.next(q.head)
-	q.count--
+	ret := q.Buf[q.Head]
+	q.Buf[q.Head] = nil
+	// Calculate new Head position.
+	q.Head = q.next(q.Head)
+	q.Count--
 
 	q.shrinkIfExcess()
 	return ret
@@ -102,17 +102,17 @@ func (q *Duplexqueue) PopFront() interface{} {
 // Implements LIFO when used with PushBack().  If the queue is empty, the call
 // panics.
 func (q *Duplexqueue) PopBack() interface{} {
-	if q.count <= 0 {
+	if q.Count <= 0 {
 		panic("duplexqueue: PopBack() called on empty queue")
 	}
 
-	// Calculate new tail position
-	q.tail = q.prev(q.tail)
+	// Calculate new Tail position
+	q.Tail = q.prev(q.Tail)
 
-	// Remove value at tail.
-	ret := q.buf[q.tail]
-	q.buf[q.tail] = nil
-	q.count--
+	// Remove value at Tail.
+	ret := q.Buf[q.Tail]
+	q.Buf[q.Tail] = nil
+	q.Count--
 
 	q.shrinkIfExcess()
 	return ret
@@ -122,20 +122,20 @@ func (q *Duplexqueue) PopBack() interface{} {
 // that would be returned by PopFront().  This call panics if the queue is
 // empty.
 func (q *Duplexqueue) Front() interface{} {
-	if q.count <= 0 {
+	if q.Count <= 0 {
 		panic("duplexqueue: Front() called when empty")
 	}
-	return q.buf[q.head]
+	return q.Buf[q.Head]
 }
 
 // Back returns the element at the back of the queue.  This is the element
 // that would be returned by PopBack().  This call panics if the queue is
 // empty.
 func (q *Duplexqueue) Back() interface{} {
-	if q.count <= 0 {
+	if q.Count <= 0 {
 		panic("duplexqueue: Back() called when empty")
 	}
-	return q.buf[q.prev(q.tail)]
+	return q.Buf[q.prev(q.Tail)]
 }
 
 // At returns the element at index i in the queue without removing the element
@@ -151,19 +151,19 @@ func (q *Duplexqueue) Back() interface{} {
 // and when full the oldest is popped from the other end.  All the log entries
 // in the buffer must be readable without altering the buffer contents.
 func (q *Duplexqueue) At(i int) interface{} {
-	if i < 0 || i >= q.count {
+	if i < 0 || i >= q.Count {
 		panic("duplexqueue: At() called with index out of range")
 	}
 	// bitwise modulus
-	return q.buf[(q.head+i)&(len(q.buf)-1)]
+	return q.Buf[(q.Head+i)&(len(q.Buf)-1)]
 }
 
 func (q *Duplexqueue) Index(i int) interface{} {
-	if i == 0 { return q.buf[q.head] }
-	if i >= q.count  || i < -q.count  { i = i % q.count }
-	if i < 0 { i += q.count }
+	if i == 0 { return q.Buf[q.Head] }
+	if i >= q.Count  || i < -q.Count  { i = i % q.Count }
+	if i < 0 { i += q.Count }
 	// bitwise modulus
-	return q.buf[(q.head+i)&(len(q.buf)-1)]
+	return q.Buf[(q.Head+i)&(len(q.Buf)-1)]
 }
 
 
@@ -174,85 +174,85 @@ func (q *Duplexqueue) Index(i int) interface{} {
 // resized smaller.
 func (q *Duplexqueue) Clear() {
 	// bitwise modulus
-	modBits := len(q.buf) - 1
-	for h := q.head; h != q.tail; h = (h + 1) & modBits {
-		q.buf[h] = nil
+	modBits := len(q.Buf) - 1
+	for h := q.Head; h != q.Tail; h = (h + 1) & modBits {
+		q.Buf[h] = nil
 	}
-	q.head = 0
-	q.tail = 0
-	q.count = 0
+	q.Head = 0
+	q.Tail = 0
+	q.Count = 0
 }
 
 // Rotate rotates the duplexqueue n steps front-to-back.  If n is negative, rotates
 // back-to-front.  Having Duplexqueue provide Rotate() avoids resizing that could
 // happen if implementing rotation using only Pop and Push methods.
 func (q *Duplexqueue) Rotate(n int) {
-	if q.count <= 1 {
+	if q.Count <= 1 {
 		return
 	}
-	// Rotating a multiple of q.count is same as no rotation.
-	n %= q.count
+	// Rotating a multiple of q.Count is same as no rotation.
+	n %= q.Count
 	if n == 0 {
 		return
 	}
 
-	modBits := len(q.buf) - 1
-	// If no empty space in buffer, only move head and tail indexes.
-	if q.head == q.tail {
-		// Calculate new head and tail using bitwise modulus.
-		q.head = (q.head + n) & modBits
-		q.tail = (q.tail + n) & modBits
+	modBits := len(q.Buf) - 1
+	// If no empty space in buffer, only move Head and Tail indexes.
+	if q.Head == q.Tail {
+		// Calculate new Head and Tail using bitwise modulus.
+		q.Head = (q.Head + n) & modBits
+		q.Tail = (q.Tail + n) & modBits
 		return
 	}
 
 	if n < 0 {
 		// Rotate back to front.
 		for ; n < 0; n++ {
-			// Calculate new head and tail using bitwise modulus.
-			q.head = (q.head - 1) & modBits
-			q.tail = (q.tail - 1) & modBits
-			// Put tail value at head and remove value at tail.
-			q.buf[q.head] = q.buf[q.tail]
-			q.buf[q.tail] = nil
+			// Calculate new Head and Tail using bitwise modulus.
+			q.Head = (q.Head - 1) & modBits
+			q.Tail = (q.Tail - 1) & modBits
+			// Put Tail value at Head and remove value at Tail.
+			q.Buf[q.Head] = q.Buf[q.Tail]
+			q.Buf[q.Tail] = nil
 		}
 		return
 	}
 
 	// Rotate front to back.
 	for ; n > 0; n-- {
-		// Put head value at tail and remove value at head.
-		q.buf[q.tail] = q.buf[q.head]
-		q.buf[q.head] = nil
-		// Calculate new head and tail using bitwise modulus.
-		q.head = (q.head + 1) & modBits
-		q.tail = (q.tail + 1) & modBits
+		// Put Head value at Tail and remove value at Head.
+		q.Buf[q.Tail] = q.Buf[q.Head]
+		q.Buf[q.Head] = nil
+		// Calculate new Head and Tail using bitwise modulus.
+		q.Head = (q.Head + 1) & modBits
+		q.Tail = (q.Tail + 1) & modBits
 	}
 }
 
 // prev returns the previous buffer position wrapping around buffer.
 func (q *Duplexqueue) prev(i int) int {
-	return (i - 1) & (len(q.buf) - 1) // bitwise modulus
+	return (i - 1) & (len(q.Buf) - 1) // bitwise modulus
 }
 
 // next returns the next buffer position wrapping around buffer.
 func (q *Duplexqueue) next(i int) int {
-	return (i + 1) & (len(q.buf) - 1) // bitwise modulus
+	return (i + 1) & (len(q.Buf) - 1) // bitwise modulus
 }
 
 // growIfFull resizes up if the buffer is full.
 func (q *Duplexqueue) growIfFull() {
-	if len(q.buf) == 0 {
-		q.buf = make([]interface{}, minCapacity)
+	if len(q.Buf) == 0 {
+		q.Buf = make([]interface{}, minCapacity)
 		return
 	}
-	if q.count == len(q.buf) {
+	if q.Count == len(q.Buf) {
 		q.resize()
 	}
 }
 
 // shrinkIfExcess resize down if the buffer 1/4 full.
 func (q *Duplexqueue) shrinkIfExcess() {
-	if len(q.buf) > minCapacity && (q.count<<2) == len(q.buf) {
+	if len(q.Buf) > minCapacity && (q.Count<<2) == len(q.Buf) {
 		q.resize()
 	}
 }
@@ -261,33 +261,33 @@ func (q *Duplexqueue) shrinkIfExcess() {
 // used to grow the queue when it is full, and also to shrink it when it is
 // only a quarter full.
 func (q *Duplexqueue) resize() {
-	newBuf := make([]interface{}, q.count<<1)
-	if q.tail > q.head {
-		copy(newBuf, q.buf[q.head:q.tail])
+	newBuf := make([]interface{}, q.Count<<1)
+	if q.Tail > q.Head {
+		copy(newBuf, q.Buf[q.Head:q.Tail])
 	} else {
-		n := copy(newBuf, q.buf[q.head:])
-		copy(newBuf[n:], q.buf[:q.tail])
+		n := copy(newBuf, q.Buf[q.Head:])
+		copy(newBuf[n:], q.Buf[:q.Tail])
 	}
 
-	q.head = 0
-	q.tail = q.count
-	q.buf = newBuf
+	q.Head = 0
+	q.Tail = q.Count
+	q.Buf = newBuf
 }
 
 func (q *Duplexqueue) Do(f func(interface{})) {
-	for i := 0; i < q.count; i++ {
-		f(q.buf[(q.head+i)&(len(q.buf)-1)])
+	for i := 0; i < q.Count; i++ {
+		f(q.Buf[(q.Head+i)&(len(q.Buf)-1)])
 	}
 }
 
 func (q *Duplexqueue) DoIndex(idx int, f func(interface{})) {
-	for i := 0; i < q.count; i++ {
+	for i := 0; i < q.Count; i++ {
 		f(q.Index(idx + i))
 	}
 }
 
 func (q *Duplexqueue) DoFor(idx int, cnt int, f func(interface{})) {
-	if cnt > q.count { cnt %= q.count }
+	if cnt > q.Count { cnt %= q.Count }
 	for i := 0; i < cnt; i++ {
 		f(q.Index(idx + i))
 	}
