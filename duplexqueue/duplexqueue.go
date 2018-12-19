@@ -6,10 +6,10 @@ const minCapacity = 8
 
 // Duplexqueue represents a single instance of the duplexqueue data structure.
 type Duplexqueue struct {
-	buf   []interface{}
-	head  int
-	tail  int
-	count int
+	buf   []interface{}		`json:"buffer"`
+	head  int 				`json:"head"`
+	tail  int 				`json:"tail"`
+	count int 				`json:"count"`
 }
 
 // Len returns the number of elements currently stored in the queue.
