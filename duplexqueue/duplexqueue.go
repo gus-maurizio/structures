@@ -222,3 +222,16 @@ func (q *Duplexqueue) resize() {
 	q.tail = q.count
 	q.buf = newBuf
 }
+
+func (q *Duplexqueue) Do(f func(interface{})) {
+	for i := 0; i < q.count; i++ {
+		f(q.buf[(q.head+i)&(len(q.buf)-1)])
+	}
+}
+
+func (q *Duplexqueue) DoAt(f func(interface{}), idx int) {
+	for i := 0; i < q.count; i++ {
+		f(q.buf[(q.head+i+idx)&(len(q.buf)-1)])
+	}
+}
+
