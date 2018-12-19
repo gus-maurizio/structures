@@ -4,12 +4,12 @@
 
 Fast ring-buffer duplex queue, or duplexqueue, or [double-ended queue](https://en.wikipedia.org/wiki/Double-ended_queue)) implementation.
 
-[![GoDoc](https://godoc.org/github.com/gus-maurizio/duplexqueue?status.svg)](https://godoc.org/github.com/gus-maurizio/duplexqueue)
+[![GoDoc](https://godoc.org/github.com/gus-maurizio/structures/duplexqueue?status.svg)](https://godoc.org/github.com/gus-maurizio/structures/duplexqueue)
 
 ## Installation
 
 ```
-$ go get github.com/gus-maurizio/duplexqueue
+$ go get github.com/gus-maurizio/structures/duplexqueue
 ```
 
 ## Duplexqueue data structure
@@ -35,7 +35,7 @@ package main
 
 import (
     "fmt"
-    "github.com/gus-maurizio/duplexqueue"
+    "github.com/gus-maurizio/structures/duplexqueue"
 )
 
 func main() {

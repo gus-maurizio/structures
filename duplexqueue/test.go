@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "github.com/gus-maurizio/duplexqueue"
+    "github.com/gus-maurizio/structures/duplexqueue"
 )
 
 func main() {
