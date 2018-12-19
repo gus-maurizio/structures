@@ -2,7 +2,7 @@ package duplexqueue
 
 // minCapacity is the smallest capacity that duplexqueue may have.
 // Must be power of 2 for bitwise modulus: x % n == x & (n - 1).
-const minCapacity = 16
+const minCapacity = 64
 
 // Duplexqueue represents a single instance of the duplexqueue data structure.
 type Duplexqueue struct {
@@ -115,6 +115,15 @@ func (q *Duplexqueue) At(i int) interface{} {
 	// bitwise modulus
 	return q.buf[(q.head+i)&(len(q.buf)-1)]
 }
+
+func (q *Duplexqueue) Index(i int) interface{} {
+	if i == 0 { return q.buf[q.head] }
+	if i >= q.count  || i < -q.count  { i = i % q.count }
+	if i < 0 { i += q.count }
+	// bitwise modulus
+	return q.buf[(q.head+i)&(len(q.buf)-1)]
+}
+
 
 // Clear removes all elements from the queue, but retains the current capacity.
 // This is useful when repeatedly reusing the queue at high frequency to avoid
@@ -229,9 +238,10 @@ func (q *Duplexqueue) Do(f func(interface{})) {
 	}
 }
 
-func (q *Duplexqueue) DoAt(f func(interface{}), idx int) {
+
+func (q *Duplexqueue) DoIndex(idx int, f func(interface{})) {
 	for i := 0; i < q.count; i++ {
-		f(q.buf[(q.head+i+idx)&(len(q.buf)-1)])
+		f(q.Index(idx + i))
 	}
 }
 
