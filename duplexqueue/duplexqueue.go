@@ -2,7 +2,7 @@ package duplexqueue
 
 // minCapacity is the smallest capacity that duplexqueue may have.
 // Must be power of 2 for bitwise modulus: x % n == x & (n - 1).
-const minCapacity = 8
+const minCapacity = 4
 
 // Duplexqueue represents a single instance of the duplexqueue data structure.
 type Duplexqueue struct {
@@ -21,13 +21,12 @@ func (q *Duplexqueue) Len() int {
 // elements are removed with PopFront(), and LIFO when elements are removed
 // with PopBack().
 func (q *Duplexqueue) Init(qty int, elem interface{}) {
-	q.Buf   = nil
 	var qsz int
-	if minCapacity > qty {
-		qsz = minCapacity
-	} else {
-		qsz = (qty / 2) * 2
-	}
+
+	q.Buf   = nil
+	qsz = minCapacity
+	for qsz < qty { qsz *= 2 }
+
 	q.Buf = make([]interface{}, qsz)
 	q.Head  = 0
 	q.Tail  = 0
@@ -35,8 +34,8 @@ func (q *Duplexqueue) Init(qty int, elem interface{}) {
 	for i := 0; i < qty; i++ {
 		q.Buf[i] = elem
 	}
-	q.Tail  += qty 
-	q.Count  = qty
+	q.Tail   = qty - 1
+	q.Count  = qty 
 }
 
 // PushBack appends an element to the back of the queue.  Implements FIFO when
@@ -68,11 +67,10 @@ func (q *Duplexqueue) PushPop(elem interface{}) interface{} {
 		panic("duplexqueue: PopBack() called on empty queue")
 	}
 
-	// Calculate new Tail position
-	q.Tail = q.prev(q.Tail)
 	// Remove value at Tail.
 	ret := q.Buf[q.Tail]
 	q.Buf[q.Tail] = nil
+	q.Tail = q.prev(q.Tail)
 	// Calculate new Head position.
 	q.Head = q.prev(q.Head)
 	q.Buf[q.Head] = elem
