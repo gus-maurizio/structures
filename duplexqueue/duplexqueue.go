@@ -290,3 +290,14 @@ func (q *Duplexqueue) DoFor(idx int, cnt int, f func(interface{})) {
 		f(q.Index(idx + i))
 	}
 }
+
+// resize resizes the duplexqueue to fit exactly twice its current contents.  This is
+// used to grow the queue when it is full, and also to shrink it when it is
+// only a quarter full.
+func (q *Duplexqueue) Slice() []interface{} {
+	if q.Tail > q.Head {
+		return q.Buf[q.Head:q.Tail]
+	} else {
+		return append(q.Buf[q.Head:], q.Buf[:q.Tail+1]...)
+	}
+}
